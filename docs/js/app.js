@@ -5,7 +5,7 @@ var mymap = L.map('map',
 	minZoom: 10,
     maxZoom: 18,
 	//maxBounds: [[41.15, 13], [42.5, 15]],
-}).setView([41.594574,14.231342], 16);
+}).setView([41.63451,14.05214], 12);
 
 // custom zoom control
 L.control.zoom({
@@ -31,12 +31,8 @@ mymap.attributionControl.addAttribution('Realizzato da <a style="color:#0096FF;"
 
 var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
 	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-});
-
-var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	maxZoom: 19,
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(mymap);
+
 
 var OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
 	maxZoom: 19,
@@ -44,8 +40,6 @@ var OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{
 });
 
 var baseMaps = {
-//	"Estratto IGM 1:25.000": IGM,
-	"OpenStreetMap": OpenStreetMap_Mapnik,
 	"OpenStreetMap HOT": OpenStreetMap_HOT,
 	"Esri World Imagery": Esri_WorldImagery,
 };
@@ -81,31 +75,65 @@ function tipologia_style(feature, latlng) {
 	};
 	
 // filter  point based on tipologia attribute
-var punti_parking = new L.geoJson(punti, {
-	filter: function (feature, layer) {
-	return (feature.properties.tipologia === "Parking")},
-	pointToLayer: tipologia_style,
-	style: tipologia_style,
-	onEachFeature: function (feature, layer) {
-	layer.bindPopup('<table class="table"><tbody><tr><td>Denominazione</td><td>'+feature.properties.denominazione+'</td></tr><tr><tr class="text-center"><td colspan="2"><a href="'+feature.properties.indicazioni+'" class="btn btn-primary btn-sm" role="button" target="_blank">Ottieni indicazioni stradali</a></td></tr></tbody></table>')}
+//var punti_parking = new L.geoJson(punti, {
+//	filter: function (feature, layer) {
+//	return (feature.properties.tipologia === "Parking")},
+//	pointToLayer: tipologia_style,
+//	style: tipologia_style,
+//	onEachFeature: function (feature, layer) {
+//	layer.bindPopup('<table class="table"><tbody><tr><td>Denominazione</td><td>'+feature.properties.denominazione+'</td></tr><tr><tr class="text-center"><td colspan="2"><a href="'+feature.properties.indicazioni+'" class="btn btn-primary btn-sm" role="button" target="_blank">Ottieni indicazioni stradali</a></td></tr></tbody></table>')}
+//}).addTo(mymap);
+//
+//var punti_food = new L.geoJson(punti, {
+//	filter: function (feature, layer) {
+//	return (feature.properties.tipologia === "Food")},
+//	pointToLayer: tipologia_style,
+//	style: tipologia_style,
+//	onEachFeature: function (feature, layer) {
+//	layer.bindPopup('<table class="table"><tbody><tr><td>Denominazione</td><td>'+feature.properties.denominazione+'</td></tr><tr><tr class="text-center"><td colspan="2"><a href="'+feature.properties.indicazioni+'" class="btn btn-primary btn-sm" role="button" target="_blank">Ottieni indicazioni stradali</a></td></tr></tbody></table>')}
+//}).addTo(mymap);
+
+// load confini
+var IT7120132 = new L.geoJson(IT7120132, {
+	weight: 2,
+	lineCap: 'round',
+	fillColor: 'red',
+	color: 'red',
+	fillOpacity: 0.1,
 }).addTo(mymap);
 
-var punti_food = new L.geoJson(punti, {
-	filter: function (feature, layer) {
-	return (feature.properties.tipologia === "Food")},
-	pointToLayer: tipologia_style,
-	style: tipologia_style,
-	onEachFeature: function (feature, layer) {
-	layer.bindPopup('<table class="table"><tbody><tr><td>Denominazione</td><td>'+feature.properties.denominazione+'</td></tr><tr><tr class="text-center"><td colspan="2"><a href="'+feature.properties.indicazioni+'" class="btn btn-primary btn-sm" role="button" target="_blank">Ottieni indicazioni stradali</a></td></tr></tbody></table>')}
+
+var IT7212121 = new L.geoJson(IT7212121, {
+	weight: 2,
+	lineCap: 'round',
+	color: 'blue',
+	fillColor: 'blue',
+	fillOpacity: 0.1,
 }).addTo(mymap);
 
-// load sentieri
-var percorso = new L.geoJson(percorso, {
+
+var IT7212128 = new L.geoJson(IT7212128, {
 	weight: 6,
-  lineCap: 'round',
-  color: 'red'
+	lineCap: 'round',
+	color: 'green',
+	fillOpacity: 0.1,
 }).addTo(mymap);
-percorso.bindTooltip("Parade Path",  {sticky: true});
+
+
+var PNLAM = new L.geoJson(PNLAM, {
+	weight: 6,
+	lineCap: 'round',
+	color: 'orange',
+	fillOpacity: 0.1
+}).addTo(mymap);
+
+
+var limite_comunale = new L.geoJson(limite_comunale, {
+	weight: 1,
+	lineCap: 'round',
+	color: 'yellow',
+	fillOpacity: 0.0
+}).addTo(mymap);
 
 
 // create overlaymaps for L.control.layers with custom icons
@@ -119,13 +147,21 @@ percorso.bindTooltip("Parade Path",  {sticky: true});
 
 // create grouped overlaymaps for L.control.groupedLayers with custom icons
 var groupedOverlays = {
-	"Points of interest:" : {
-		'<img src = ico/fontane.png width="25px">Parking': punti_parking,
-    '<img src = ico/sorgenti.png width="25px">Food': punti_food,
+	"PIT7120132":{
+		'<i class="fas fa-square" style="color:red"></i> IT7120132':IT7120132,
 	},
-	"Parade Path":{
-		'<i class="fas fa-wave-square fa-2x" style="color:red"></i> Parade Path':percorso,
+	"IT7212121":{
+		'<i class="fas fa-square" style="color:blue"></i> IT7212121':IT7212121,
 	},
+	"IT7212128":{
+		'<i class="fas fa-wave-square fa-2x" style="color:red"></i> IT7212128':IT7212128,
+	},
+	"PNLAM":{
+		'<i class="fas fa-wave-square fa-2x" style="color:red"></i> PNLAM':PNLAM,
+	},
+	"limite_comunale":{
+		'<i class="fas fa-wave-square fa-2x" style="color:red"></i> limite_comunale':limite_comunale,
+	}
 };
 
 // function for controlling the behaviour of the control.layers
