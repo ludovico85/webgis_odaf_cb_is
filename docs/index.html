@@ -26,15 +26,15 @@
               <div class="list-group list-group-flush" id="legenda">
                     <strong>Mappe di base</strong>
                         <div class="form-check">
-                          <input class="form-check-input" type="radio" name="exampleRadios" id="base1" value="option" checked>
+                          <input class="form-check-input" type="radio" name="exampleRadios" id="base1" value="option">
                           <label class="form-check-label" for="elemento">
-                            <p>MapBox</p>
+                            <p>OpenStreetMap</p>
                           </label>
                         </div>
                         <div class="form-check">
-                          <input class="form-check-input" type="radio" name="exampleRadios" id="base2" value="option">
-                          <label class="form-check-label" for="elemento">
-                            <p>Google Satellite</p>
+                          <input class="form-check-input" type="radio" name="exampleRadios" id="base2" value="option" checked>
+                          <label class="form-check-label" for="0elemento">
+                            <p>ESRI satellite</p>
                           </label>
                         </div>
                     <strong>Layer Catasto</strong>
@@ -50,7 +50,7 @@
                         Particelle (visibile a zoom >=17)
                       </label>
                     <div class="slider">
-                        <input id="range1" type="range" min="0" max="1" step="0.1" value="1" class="slider" onchange="updateOpacity1(this.value)">
+                        <input autocomplete="off" id="range1" type="range" min="0" max="1" step="0.1" value="1" class="slider" onchange="updateOpacity1(this.value)">
                         <p>Opacità: <span id="value1"></span></p>
                     </div>
                     </div>
@@ -114,6 +114,7 @@
                     </div>
                 </div>
 		</div>
+
         <script src="data/percorso.js"></script><!-- loading geojson from data subfolder -->
 		<script src="data/limite_comunale.js"></script><!-- loading geojson from data subfolder -->
 		<script src="data/IT7120132.js"></script><!-- loading geojson from data subfolder -->
@@ -136,5 +137,7 @@
         <script src="js/L.Control.Layers.Tree.js" charset="utf-8"></script>
         <script src="js/leaflet.browser.print.js" type="text/javascript"></script>
 		<script src="js/app.js"></script>
+		<script>
+</script>
     </body>
 </html>

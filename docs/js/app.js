@@ -269,7 +269,19 @@ $("input").click(function(event){
 		mymap.addLayer(layerClicked);
 	}
 });
-//
+
+
+// Rimuovi l'attributo checked dal checkbox 3elemento all'avvio della pagina
+$(document).ready(function() {
+	$('#base1').prop('checked', false);
+	$('#base2').prop('checked', true);
+	$('#1elemento').prop('checked', false);
+	$('#2elemento').prop('checked', false);
+	$('#3elemento').prop('checked', false);
+	$('#4elemento').prop('checked', false);
+	$('#5elemento').prop('checked', false);
+	$('#6elemento').prop('checked', false);
+});
 
 
 
