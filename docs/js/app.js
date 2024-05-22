@@ -57,7 +57,7 @@ if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
 	}
 	return null;
 };
-
+ 
 var drawnItems = new L.FeatureGroup();
      mymap.addLayer(drawnItems);
      var drawControl = new L.Control.Draw({
@@ -150,25 +150,26 @@ var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest
 	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 }).addTo(mymap);
 
-
 var OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
 	maxZoom: 19,
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
 });
 
 $("#base1").click(function() {
-	mymap.addLayer(OpenStreetMap_HOT)
-	mymap.removeLayer(Esri_WorldImagery)
-});
-$("#base2").click(function() {
-	mymap.addLayer(Esri_WorldImagery)
-	mymap.addLayer(OpenStreetMap_HOT)
+	mymap.addLayer(OpenStreetMap_HOT);
+	mymap.removeLayer(Esri_WorldImagery);
+	readdWMSLayers();
 });
 
+$("#base2").click(function() {
+	mymap.addLayer(Esri_WorldImagery);
+	mymap.removeLayer(OpenStreetMap_HOT);
+	readdWMSLayers();
+});
 
 // INIZIO WMS CATASTO
-var ETRS89width= 18.99-5.93;
-var startResolution = ETRS89width/1024;
+var ETRS89width = 18.99 - 5.93;
+var startResolution = ETRS89width / 1024;
 var grid_resolution = new Array(22);
 for (var i = 0; i < 22; ++i) {
 	grid_resolution[i] = startResolution / Math.pow(2, i);
@@ -180,7 +181,6 @@ var crs_6706 = new L.Proj.CRS('EPSG:6706',
 		origin: [0, 0],
 		bounds: L.bounds([5.93, 34.76], [18.99, 47.1])
 	});
-
 
 var wmsLayer_1 = L.tileLayer.wms('https://wms.cartografia.agenziaentrate.gov.it/inspire/wms/ows01.php', {
     layers: ['province', 'CP.CadastralZoning'],
@@ -236,6 +236,7 @@ var wmsLayer_6 = L.tileLayer.wms('https://wms.cartografia.agenziaentrate.gov.it/
 	attribution: '© ' + '<a href="https://creativecommons.org/licenses/by/4.0/deed.it">Agenzia delle Entrate</a>',
 });
 // FINE WMS CATASTO
+
 // LAYER PER LEGENDA CUSTOM
 window.option1 = wmsLayer_1;
 window.option2 = wmsLayer_2;
@@ -246,10 +247,9 @@ window.option6 = wmsLayer_6;
 // FINE LAYER PER LEGENDA CUSTOM
 
 // INIZIO SELETTORE OPACITA'
-/*/ selettore opacità /*/
 function updateOpacity1(value) {
-wmsLayer_2.setOpacity(value);
-};
+    wmsLayer_2.setOpacity(value);
+}
 
 var slider1 = document.getElementById("range1");
 var output1 = document.getElementById("value1");
@@ -257,6 +257,7 @@ output1.innerHTML = slider1.value;
 
 slider1.oninput = function() {
   output1.innerHTML = this.value;
+  updateOpacity1(this.value);
 }
 // FINE SELETTORE OPACITA'
 
@@ -264,28 +265,52 @@ $("input").click(function(event){
 	layerClicked = window[event.target.value];
 	if (mymap.hasLayer(layerClicked)) {
 		mymap.removeLayer(layerClicked);
-	}
-	else {
+	} else {
 		mymap.addLayer(layerClicked);
 	}
 });
 
+// Funzione per riaggiungere i layer WMS
+function readdWMSLayers() {
+	$("input:checkbox").each(function() {
+		var layer = window[this.value];
+		if (this.checked && !mymap.hasLayer(layer)) {
+			mymap.addLayer(layer);
+		}
+	});
+}
 
-// Rimuovi l'attributo checked dal checkbox 3elemento all'avvio della pagina
+// Rimuovi l'attributo checked dai checkbox all'avvio della pagina
+//$(document).ready(function() {
+//	$('#base1').prop('checked', false);
+//	$('#base2').prop('checked', true);
+//	$('#1elemento').prop('checked', false);
+//	$('#2elemento').prop('checked', false);
+//	$('#3elemento').prop('checked', false);
+//	$('#4elemento').prop('checked', false);
+//	$('#5elemento').prop('checked', false);
+//	$('#6elemento').prop('checked', false);
+// });
+
+// Funzione per ripristinare lo stato dei checkbox dallo storage locale
+function restoreCheckboxState() {
+    var checkboxState = JSON.parse(localStorage.getItem('checkboxState'));
+    if (checkboxState) {
+        Object.keys(checkboxState).forEach(function(id) {
+            $('#' + id).prop('checked', checkboxState[id]);
+            if (!checkboxState[id]) {
+                $('#' + id).parent().removeClass('active'); // Rimuovi la classe "active" dai genitori (label) delle checkbox deselezionate
+            } else {
+                $('#' + id).parent().addClass('active'); // Aggiungi la classe "active" ai genitori (label) delle checkbox selezionate
+            }
+        });
+    }
+}
+
+// Chiamare la funzione di ripristino allo stato dei checkbox al caricamento della pagina
 $(document).ready(function() {
-	$('#base1').prop('checked', false);
-	$('#base2').prop('checked', true);
-	$('#1elemento').prop('checked', false);
-	$('#2elemento').prop('checked', false);
-	$('#3elemento').prop('checked', false);
-	$('#4elemento').prop('checked', false);
-	$('#5elemento').prop('checked', false);
-	$('#6elemento').prop('checked', false);
+    restoreCheckboxState();
 });
-
-
-
-
 
 // loading geoJson
 // custom icon for poi acquedotto

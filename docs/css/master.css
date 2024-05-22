@@ -151,3 +151,13 @@ background-color: rgba(255,255,255,0.5)
 .leaflet-control-fullscreen-button leaflet-bar-part {
   z-index: 9999;
 }
+
+.form-check-label.active {
+    /* Stile per label attive (checkbox selezionata) */
+    color: green; /* ad esempio */
+}
+
+.form-check-label {
+    /* Stile per label non attive (checkbox non selezionata) */
+    color: black; /* ad esempio */
+}
